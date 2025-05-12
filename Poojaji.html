@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hindu Puja Booking</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('https://www.transparenttextures.com/patterns/golden-scale.png');
+      background-color: #fffaf0;
+      font-family: 'Georgia', serif;
+    }
+    header {
+      background-color: #f59e0b;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    section {
+      background-color: #fff8dc;
+      border: 2px solid #f59e0b;
+      padding: 20px;
+      border-radius: 10px;
+    }
+  </style>
+  <script>
+    if (!localStorage.getItem('pujas')) {
+      localStorage.setItem('pujas', JSON.stringify([]));
+    }
+
+    function savePuja() {
+      let name = document.getElementById("name").value;
+      let pujaType = document.getElementById("pujaType").value;
+      let dateTime = document.getElementById("dateTime").value;
+      let notes = document.getElementById("notes").value;
+
+      let pujas = JSON.parse(localStorage.getItem('pujas'));
+      pujas.push({ name, pujaType, dateTime, notes });
+      localStorage.setItem('pujas', JSON.stringify(pujas));
+
+      alert("Puja booked successfully!");
+      document.getElementById("bookingForm").reset();
+      displayUpcomingPujas();
+      displayPastPujas();
+    }
+
+    function displayUpcomingPujas() {
+      let upcomingList = document.getElementById("upcomingPujas");
+      upcomingList.innerHTML = "";
+
+      // Static Hindu calendar-based puja list
+      let upcoming = [
+        "Ram Navami - 17 April 2025",
+        "Hanuman Jayanti - 22 April 2025",
+        "Guru Purnima - 10 July 2025",
+        "Raksha Bandhan - 18 August 2025",
+        "Navratri - 29 September 2025",
+        "Diwali - 20 October 2025"
+      ];
+
+      upcoming.forEach(puja => {
+        let li = document.createElement("li");
+        li.className = "py-2 text-lg text-orange-800";
+        li.textContent = puja;
+        upcomingList.appendChild(li);
+      });
+    }
+
+    function displayPastPujas() {
+      let pastList = document.getElementById("pastPujas");
+      pastList.innerHTML = "";
+
+      // Random past puja list based on Hindu calendar
+      let past = [
+        "Makar Sankranti - 14 Jan 2025",
+        "Vasant Panchami - 3 Feb 2025",
+        "Maha Shivratri - 26 Feb 2025",
+        "Holi - 14 March 2025",
+        "Ram Navami - 17 April 2024"
+      ];
+
+      past.forEach(puja => {
+        let li = document.createElement("li");
+        li.className = "py-2 text-lg text-red-700";
+        li.textContent = puja;
+        pastList.appendChild(li);
+      });
+
+      // Add user's booked pujas also
+      let pujas = JSON.parse(localStorage.getItem('pujas'));
+      pujas.forEach(puja => {
+        let pujaDate = new Date(puja.dateTime);
+        let now = new Date();
+        if (pujaDate < now) {
+          let li = document.createElement("li");
+          li.className = "py-2 text-lg text-red-900";
+          li.textContent = `${puja.name} - ${puja.pujaType} - ${puja.dateTime}`;
+          pastList.appendChild(li);
+        }
+      });
+    }
+
+    window.onload = function () {
+      displayUpcomingPujas();
+      displayPastPujas();
+    };
+  </script>
+</head>
+<body class="min-h-screen">
+  <div class="container mx-auto px-4 py-6">
+    <!-- Header -->
+    <header class="text-center shadow-lg">
+      <h1 class="text-4xl font-bold">🪔 Hindu Puja Booking 🕉️</h1>
+      <p class="mt-2 text-lg italic">Plan your spiritual events with devotion</p>
+    </header>
+
+    <!-- Booking Form -->
+    <section class="my-8 shadow-md">
+      <h2 class="text-2xl font-semibold mb-4 text-orange-700">📅 Book a Puja</h2>
+      <form id="bookingForm" class="space-y-4">
+        <div>
+          <label for="name" class="block font-medium">Your Name</label>
+          <input type="text" id="name" required class="w-full px-4 py-2 border rounded-md">
+        </div>
+        <div>
+          <label for="pujaType" class="block font-medium">Select Puja</label>
+          <select id="pujaType" required class="w-full px-4 py-2 border rounded-md">
+            <option value="Lakshmi Puja">Lakshmi Puja</option>
+            <option value="Ganesh Puja">Ganesh Puja</option>
+            <option value="Navratri Puja">Navratri Puja</option>
+            <option value="Satyanarayan Katha">Satyanarayan Katha</option>
+            <option value="Durga Puja">Durga Puja</option>
+          </select>
+        </div>
+        <div>
+          <label for="dateTime" class="block font-medium">Date & Time</label>
+          <input type="datetime-local" id="dateTime" required class="w-full px-4 py-2 border rounded-md">
+        </div>
+        <div>
+          <label for="notes" class="block font-medium">Notes (Optional)</label>
+          <textarea id="notes" rows="3" class="w-full px-4 py-2 border rounded-md"></textarea>
+        </div>
+        <button type="button" onclick="savePuja()" class="w-full py-2 bg-orange-600 text-white font-semibold rounded-md hover:bg-orange-700">📖 Book Puja</button>
+      </form>
+    </section>
+
+    <!-- Upcoming Pujas -->
+    <section class="my-8 shadow-md">
+      <h2 class="text-2xl font-semibold mb-4 text-green-700">🔮 Upcoming Pujas</h2>
+      <ul id="upcomingPujas" class="list-disc list-inside space-y-2"></ul>
+    </section>
+
+    <!-- Past Pujas -->
+    <section class="my-8 shadow-md">
+      <h2 class="text-2xl font-semibold mb-4 text-red-800">📜 Past Pujas</h2>
+      <ul id="pastPujas" class="list-disc list-inside space-y-2"></ul>
+    </section>
+  </div>
+</body>
+</html>
